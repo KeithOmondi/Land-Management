@@ -1,7 +1,6 @@
 export const sendToken = (user, statusCode, message, res) => {
   const token = user.generateToken();
 
-  // Remove sensitive fields before sending (e.g., password)
   const sanitizedUser = {
     _id: user._id,
     name: user.name,
@@ -16,13 +15,13 @@ export const sendToken = (user, statusCode, message, res) => {
     .cookie("token", token, {
       expires: new Date(Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Only send cookies over HTTPS in production
-      sameSite: "strict", // Helps protect against CSRF
+      secure: process.env.NODE_ENV === "production", // HTTPS in production
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Use None for cross-origin, Lax for local
     })
     .json({
       success: true,
       message,
       user: sanitizedUser,
-      token,
+      // token: token, // Optional — not needed if cookie is used
     });
 };

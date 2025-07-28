@@ -7,6 +7,7 @@ import validator from "validator";
 import { sendToken } from "../utils/sendToken.js";
 import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js";
 import { sendEmail } from "../utils/sendMail.js";
+import crypto from "crypto";
 
 // REGISTER CONTROLLER
 export const register = catchAsyncErrors(async (req, res, next) => {
@@ -269,7 +270,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
   user.password = await bcrypt.hash(password, 10);
   user.resetPasswordToken = undefined;
   user.resetPasswordExpiry = undefined;
-  await user.save();
+  await user.save({ validateBeforeSave: false });
 
   sendToken(user, 200, "Password reset successful. You can now log in.", res);
 });

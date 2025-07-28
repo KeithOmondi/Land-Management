@@ -2,6 +2,16 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDashboard } from "../redux/parcel/dashboardSlice";
 import { Link } from "react-router-dom";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Legend,
+} from "recharts";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
@@ -11,7 +21,6 @@ export default function Dashboard() {
     pendingTransfers,
     activeDisputes,
     lastLogin,
-    notifications,
     loading,
     error,
   } = useSelector((state) => state.dashboard);
@@ -19,6 +28,13 @@ export default function Dashboard() {
   useEffect(() => {
     dispatch(fetchDashboard());
   }, [dispatch]);
+
+  // Sample data for the chart — replace with your real data!
+  const sampleChartData = [
+    { name: "Parcels Owned", value: parcelsOwned },
+    { name: "Pending Transfers", value: pendingTransfers },
+    { name: "Active Disputes", value: activeDisputes },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white py-12 px-4 sm:px-6 lg:px-8">
@@ -42,11 +58,7 @@ export default function Dashboard() {
             {/* Overview Section */}
             <Section title="Your Land Overview">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard
-                  title="Parcels Owned"
-                  value={parcelsOwned}
-                  icon="🏡"
-                />
+                <StatCard title="Parcels Owned" value={parcelsOwned} icon="🏡" />
                 <StatCard
                   title="Pending Transfers"
                   value={pendingTransfers}
@@ -65,17 +77,20 @@ export default function Dashboard() {
               </div>
             </Section>
 
-            {/* Notifications */}
-            <Section title="Recent Notifications">
-              {notifications?.length > 0 ? (
-                <div className="space-y-4">
-                  {notifications.map((notif) => (
-                    <Notification key={notif.id} {...notif} />
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500 text-sm">No new notifications.</p>
-              )}
+            {/* New Charts Section */}
+            <Section title="Your Data Insights">
+              <div style={{ width: "100%", height: 300 }}>
+                <ResponsiveContainer>
+                  <BarChart data={sampleChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="value" fill="#6366F1" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </Section>
 
             {/* Quick Actions */}
@@ -85,19 +100,19 @@ export default function Dashboard() {
                   label="View My Parcels"
                   icon="🗺️"
                   color="blue"
-                  to="/parcels"
+                  to="/user/parcels"
                 />
                 <ActionButton
                   label="File New Dispute"
                   icon="📝"
                   color="purple"
-                  to="/disputes"
+                  to="/user/disputes"
                 />
                 <ActionButton
                   label="Download Documents"
                   icon="📥"
                   color="teal"
-                  to="/documents"
+                  to="/user/documents"
                 />
               </div>
             </Section>
@@ -124,31 +139,6 @@ const StatCard = ({ title, value, icon }) => (
     <p className="text-3xl font-bold text-indigo-700 mt-1">{value}</p>
   </div>
 );
-
-const Notification = ({ message, type = "info" }) => {
-  const styles = {
-    success: "bg-green-50 text-green-800 border-green-200",
-    warning: "bg-yellow-50 text-yellow-800 border-yellow-200",
-    info: "bg-blue-50 text-blue-800 border-blue-200",
-  };
-
-  const icons = {
-    success: "✅",
-    warning: "⚠️",
-    info: "ℹ️",
-  };
-
-  return (
-    <div
-      className={`flex items-start gap-3 border-l-4 p-4 rounded-md ${
-        styles[type] || styles.info
-      }`}
-    >
-      <span className="text-xl">{icons[type] || icons.info}</span>
-      <p className="text-sm">{message}</p>
-    </div>
-  );
-};
 
 const ActionButton = ({ label, color = "blue", icon, to }) => {
   const colorClasses = {

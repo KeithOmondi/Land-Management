@@ -52,6 +52,8 @@ import SurveyorProfile from "./pages/surveyor/SurveyorProfile";
 import SurveyAllocationForm from "./pages/admin/SurveyAllocationForm";
 import AdminSurveyorProfile from "./pages/admin/AdminSurveyorProfile";
 import CreateSurveyorForm from "./pages/admin/CreateSurveyorForm";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -69,6 +71,8 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/password/reset/:token" element={<ResetPassword />} />
 
         {/* Optional Redirect from /dashboard to /user/dashboard */}
         <Route path="/dashboard" element={<Navigate to="/user/dashboard" />} />
